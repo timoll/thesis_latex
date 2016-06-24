@@ -1,0 +1,19 @@
+LEAD:
+Die Analyse der Blickrichtung eines Athleten bietet wichtige Erkentnisse über dessen Hand-Aug-Koordination oder visuelle Suchtechniken. Um die Blickrichtung zu analisieren kommen Eye-tracking Systeme zum Einsatz, wobei ein solches System für Sportlern hohen Anforderungen an die Genauikeit, Portabilitat und zeitliche Auflösung genügen muss. 
+
+Ausgangslage:
+Die Forschungsgruppe des microLab hat in Zusammenarbeit mit dem Institut für Sportwissenschaft an der Universität Bern ein portables Eye-tracking System für Sportler entwickelt. Bei diesem System werden pro Auge zwei Kameras eingesetzt um infrarot Aufnahmen zu erfassen. Die Kameras liefern mit 120 Bilder pro Sekunde eine hohe Auflösung. Wobei aus den Bildern noch keine Daten generiert werden.
+
+Ziel der Arbeit
+Aus den Bildern der Kameras soll die Blickrichtung des Athleten ermittelt werden. Dafür ist es notwendig die Pupille elektronisch zu detektieren. Ein kaum getesteter schneller Algorithmus soll dafür optimiert und erweitert werden damit diese Detektion robust jedoch mit einem minimalen Messfehler funktioniert
+
+Um die Genauigkeit der Algorithmen zu überprüfen sind Testdaten mit bekannten Ist-Werten notwendig. Für das Generieren dieser Daten soll ein realitätsnahes Model der Augen und des Eye-tracking-systems erstellt werden. Das Model soll flexibel sein so, dass Bilder für verschiedene Szenarien generiert werden können. 
+
+Realisierung
+Mit der 3D-Modeling Software Blender wurde ein realitätsnahes Model der Brille und des menschlichen Augen erstellt. Das Model ermöglicht das Einstellen von wichtigen Parameter wie die Blickrichtung, die Position und Rotation der Brille. Aus dem Model können Bilder generiert werden die den realen Daten der Kameras nahe kommen. Für jedes Bild wirden auch die wichtigen Parameter festgehalten.
+
+Mithilfe der generierten Bildern wurde der exisitiernde Algorithmus zum elektronischen Detektieren der Pupille getestet und die Schwächen ermittelt. Diese Erkentnisse wurden verwendet um den Algorithmus zu optimieren und erweitern bis ein zufriedestellendes Ergebnis vorlag das auch mit echten Aufnahmen zurechtkommt.
+
+Ausblick
+In der Partnerarbeit wurde ein Algorithmus angewendet um aus den detektierten Pupillen die Blickrichtung zu ermitteln. Die so berechneten Blickrichtung kann mit den Parametern der generierten Bildern verglichen werden um den Messfehler klar zu quantifizieren.
+

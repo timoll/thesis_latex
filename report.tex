@@ -36,7 +36,13 @@
 \usepackage{float}														% floating objects
 \usepackage{caption}													% for captions of figures and tables
 \usepackage{booktabs}													% package for nicer tables
-\usepackage{tocvsec2}													% provides means of controlling the sectional numbering
+\usepackage{tocvsec2}
+\usepackage{hhline}	
+\usepackage{multirow}	
+\usepackage{pbox}
+\usepackage{makecell}
+\usepackage{caption}
+\usepackage{subcaption}											% provides means of controlling the sectional numbering
 %---------------------------------------------------------------------------
 
 % Load Math Packages
@@ -46,6 +52,7 @@
 \usepackage{amsfonts}                      		% set of miscellaneous TeX fonts that augment the standard CM
 \usepackage{amssymb}													% mathematical special characters
 \usepackage{exscale}													% mathematical size corresponds to textsize
+
 %---------------------------------------------------------------------------
 
 % Package to facilitate placement of boxes at absolute positions
@@ -54,7 +61,10 @@
 \setlength{\TPHorizModule}{1mm}
 \setlength{\TPVertModule}{1mm}
 %---------------------------------------------------------------------------					
-			
+\renewcommand\theadalign{cb}
+\renewcommand\theadfont{\bfseries}
+\renewcommand\theadgape{\Gape[4pt]}
+\renewcommand\cellgape{\Gape[4pt]}		
 % Definition of Colors
 %---------------------------------------------------------------------------
 \RequirePackage{color}                          % Color (not xcolor!)
@@ -178,7 +188,8 @@
 
 \include{chapters/introduction}
 \include{chapters/instructions}
-\include{chapters/typeareatest}
+\include{chapters/eyemodel}
+\include{chapters/pupildetection}
 \include{chapters/conclusions}
 %---------------------------------------------------------------------------
 
