@@ -1,10 +1,10 @@
-\chapter{Eye Model}
-\label{chap:eyeModel}
+\chapter{Model}
+\label{chap:Model}
 
-A very important step in hardware and software development is testing. For an eye tracking system it requires a big effort to do this with real data as the information where the participant looks at each time needs to be recorded alongside of the videostream. For this project real time data processing is needed as there is no hardware available on GazelleCompute to encode or store four streams of 120fps with QVGA resolutioni
+A very important step in hardware and software development is testing. For an eye tracking system it requires a big effort to do this with real data as the information where the participant looks at each time needs to be recorded alongside of the videostream. For this project real time data processing is needed as there is no hardware available on Gazelle Compute to encode or store four streams of 120fps with QVGA resolution.
 
-To optimize the algorithms a simple way of generating new data where the gaze direction and the camera positions are known, would simplify the process. 
-\section{What is Important}
+To optimize the algorithms a simple way of generating new data where the gaze direction and the camera positions are known would simplify the process. 
+\section{3D-Modeling Software}
 \label{sec:whatIsImportant}
 
 The 3D-Modeling software to create the model needs to fulfill a few requirements:
@@ -28,8 +28,28 @@ The 3D-Modeling software to create the model needs to fulfill a few requirements
 Blender is able to match all requirements although the last one might be debatable. You can apply a material properties to a surface. This includes refracting. Rotation and position of objects can be inserted as keyframes and it interpolates the steps in-between. 
 
 Blender is also an open source project that is built with Python and has an powerful API that gives access to nearly everything.
+\section{Requirements for the Model}
+In order to create a flexible model that is close to the reality, the model needs to follow the following requirements:
+\begin{itemize}
+	\item Correctly represent a human eye
+	\item Accommodate for different eye parameters
+	\begin{itemize}
+		\item Eye diameter
+		\item Distance between Eyes
+	\end{itemize}
+	\item Correctly represent camera placement and rotation
+	\item Correctly represent camera properties
+	\begin{itemize}
+		\item Resolution
+		\item Framerate
+		\item Field of View
+	\end{itemize}
+	\item Gaze direction can be animated
+	\item Classes rotation and position can be animated
+	\item Front facing cameras records gaze direction
+\end{itemize}
 
-\section{The Human Eye}
+\section{Human Eye}
 A side view of a human eye model is visible in \ref{fig:humanEyeModel}. The camera can only see the front part of the eye. As a result only the cornea, anterior chamber and the iris need to be modeled correctly. The lens can be simplified by a black surface. 
 
 It might be counterintuitive that the cornea extends as much out of the eyeball as visible in \ref{fig:humanEyeModel}. An easy way to verify is to close the eye and move the eyes while holding a finger on the eyelid.
@@ -37,16 +57,16 @@ It might be counterintuitive that the cornea extends as much out of the eyeball 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.3]{images/human_eye_model.png}
-	\caption{Side view of a human eye model}
+	\caption{Side view of a human eye model \cite{gross:opticalSystems}}
 	\label{fig:humanEyeModel}
 \end{figure}
 
-There are a few models with different values for the refracting indexes, radii and distances but they are close together in most cases. So the simplified Gullstrand eye was chosen.
+There are a few models with different values for the refracting indexes, radii and distances but they are close together in most cases. So the simplified Gullstrand eye was chosen for the model.
+
 \begin{table}[!htb]
 \centering
 \begin{tabular}{@{}|l|l|l|l|l|l|l|@{}}
 	\hline
-	
 	\multirow{2}{*}{} & \multicolumn{3}{l|}{\thead{Relaxed}} & \multicolumn{3}{l|}{\thead{Accomodated}} \\ \hhline{~------}
 	\thead{ Notaton\\{}} &  \thead{Radius r \\ {}[mm] }        & \thead{Thickness d\\ {}[mm]}    & \thead{Index n\\ {}}        & \thead{Radius r \\ {}[mm] }& \thead{Thickness d \\ {}[mm] }& \thead{Index n\\{} }    \\ \hline
 	cornea     &  7.70        & 0.50      & 1.376       &  7.70   &0.50  & 1.376\\ \hline
@@ -54,36 +74,77 @@ There are a few models with different values for the refracting indexes, radii a
 	crystalline lens     &  10.0    & 3.60          & 1.4085    & 5.33   &   4.0  &  1.426 \\ \hline
 	vitreous humor    p  & -6.00      & 17.187         & 1.336    & -5.33  & 13.816  &  1.336  \\ \hline
 \end{tabular}
-\caption{Algorithmic Complexity of the associative Qt Containers where each element can be accessed over the associated key}
-\label{tab:qt-container-associative}
+\caption{Properties of the eye with the simplified Gullstrand eye. \cite{gross:opticalSystems}}
+\label{tab:gullstrandEye}
 \end{table}
 
+A human eye has on average a diameter of 24mm and the distance between the eyes ranges from 56mm to 72mm with the mean for men at 65mm and 62.6mm for women. \cite{gross:opticalSystems}
+\section{Base Model}
+\label{sec:theModel}
 
-\subsection{Demonstrandum}
-\label{subsec:satzspiegeltest_typoblindtext_demonstrandum}
+While there are quite a few parameters that need to be adjusted, some will remain the same. Those can be incorporated into a base model that can then be adjusted by a script for each render.
 
-Quod erat demonstrandum. Seit 1975 fehlen in den meisten Testtexten die Zahlen, weswegen nach TypoGb. 204 \S ab dem Jahr 2034 Zahlen in 86 der Texte zur Pflicht werden. Nichteinhaltung wird mit bis zu 245 \texteuro oder 368\$ bestraft. Genauso wichtig in sind mittlerweile auch \^A\c{c}c\`e\~nt\"e, die in neueren Schriften aber fast immer enthalten sind. Ein wichtiges aber schwierig zu integrierendes Feld sind OpenType-Funktionalit\"aten. Je nach Software und Voreinstellungen k\"onnen eingebaute Kapit\"alchen, Kerning oder Ligaturen (sehr pfiffig) nicht richtig dargestellt werden.
+This base model is centred around an accurate eye model that is built with the properties mentioned in section \ref{sec:theHumanEye}. Every eye is a group that can be manipulated with a script as one object. This includes a directed light cone that points where the eye is looking.
 
-\subsubsection{Subsubsection}
+An existing model of the glasses is used and placed to approximately represent the position how they would be in the real world. Cutouts for the cameras are used to place them correctly while the rotation is approximated to capture an average positioned eye correctly. The light cones that represent the gaze direction illuminate a small portion of a wall that is captured by the front facing camera and can be seen in figure \ref{fig:base3D}. As with the eye, the cameras and the glasses build a single object that can be moved and rotated. The result can be seen in figure \ref{fig:baseModel} 
 
-This is a typo dummy text. On it you can see if all the letters there are and how they look. Sometimes one uses words like Hamburgefonts, Rafgenduks or Handgloves to test fonts. Sometimes phrases that contain all letters of the alphabet - one calls these sets "pangrams". 
-
-\subsubsection{Subsubsection}
-
-Well known is this: The quick brown fox jumps over the lazy old dog. Often in type dummy texts also foreign-language sentence parts are installed (AVAIL\textsuperscript{\texttrademark} and Wefox\textsuperscript{\textregistered} are testing aussi la Kerning) to test the effect in other languages. In Latin, for example, almost every font looks good. Quod erat demonstrandum.
-
-\section{Webstandards}
-\label{sec:satzspiegeltest_webstandards}
-
-Everywhere the same old story. The layout is complete, the text is slow in coming. This layout is now not naked in space and small and empty occurs, I help out: the dummy text. Created exactly for this purpose, always in the shadow of my big brother "Lorem Ipsum", I look forward every time you read a few lines. Because esse est percipi - being is to be perceived.
-
-And now because you already have the goodness to accompany me a few more sentences long, I would like to take this opportunity to serve you not only as a stopgap, but to point out something that is going to be perceived as deserved: Web viz. See Web standards are the rules that build on the websites. So there are rules for HTML, CSS, JavaScript or XML, words that you might have heard of your developers. These standards ensure that all parties the maximum benefit from a website.
-
-\begin{figure}[H]
-	\centering
-		\includegraphics[scale=0.7]{images/multivariate_gauss.png}
-	\caption{Normal distribution}
-	\label{fig:normal_distribution}
+\begin{figure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{images/base_model_front.png}
+		\caption{Front view of base model}
+		\label{fig:baseFront}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=0.787\linewidth]{images/base_model_side.png}
+		\caption{Side view of base model}
+		\label{fig:baseSide}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{images/base_model_bottom.png}
+		\caption{Bottom view of base model}
+		\label{fig:baseBottom}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{images/base_model_3D.png}
+		\caption{3D-view of base model}
+		\label{fig:base3D}
+	\end{subfigure}
+	\caption{Finished base model with eyes in the center}
+	\label{fig:baseModel}
 \end{figure}
+\section{Scripting}
+The base model alone is not enough to create meaningful results because there is no animation, the eyes are not placed and blender would just render one camera. Additionally the position and rotation of the eye and glasses needs to be logged for every frame as they are required for comparing the final gaze direction results. To allow a wide variaty of animations to be created a simple way of configuring the script is needed.
+\subsection{Automate Animation}
+This script is written in Python because Blender offers a powerfull Phython API that allows such a script to modify every property in a model. 
+JSON is a simple data-interchange format that is easy to read and write for humans. Sites such as \url{http://jsoneditoronline.org/} offer a convenient way to modify JSON. The script uses a JSON file with all the properties as input and adjusts the values in the model and saves a modified blend file for each camera that is ready to be rendered. The properties includes static parameters such as the eye position and diameter and the number of frames that should be rendered. But also dynamic information for keyframes such as the rotation of the eye and position and rotation of the glasses. 
+\subsection{Automate Process}
+With the script the process to generate render output is as follows:
+\textbf{}
+\begin{lstlisting}
+#Use script to generate render ready files
+blender base.blend -b -P generate.py -- animation.json
+#render the animation for each camera
+blender -b leftDown.blend -E CYCLES -t 4 -a
+blender -b leftUp.blend -E CYCLES -t 4 -a
+blender -b rightDown.blend -E CYCLES -t 4 -a
+blender -b rightUp.blend -E CYCLES -t 4 -a
+blender -b scene.blend -E CYCLES -t 4 -a
+\end{lstlisting}
 
-In contrast to previous websites we no longer need, for example, two different sites for the program Internet Explorer and another browser. It extends a page that - properly applied - both works on different browsers on the net, but just as good for printing or display on a cell phone is. Mind: A site for all formats. What a relief. Standards save time provide for the development costs and ensure that web pages can be easier to maintain later. Of course, only if everyone adheres to these standards.
+This is still very time consuming and can be automated further. 
+
+A Makefile offers a convenient way to automate the stages further and make it simple to clean the whole mess up once the generated or rendered files are not needed anymore. 
+With the Makefile the whole process is shorter and easier to remember:
+\textbf{}
+\begin{lstlisting}
+#export config file
+export ANIMATION_JSON=animation.json
+make
+make render
+\end{lstlisting}
+
+An added benefit is also that make will start the render jobs detached and distribute the available cpu cores equally among the render jobs.
