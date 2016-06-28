@@ -1,7 +1,7 @@
 \chapter{Model}
 \label{chap:Model}
 
-A very important step in hardware and software development is testing. For an eye tracking system it requires a big effort to do this with real data as the information where the participant looks at each time needs to be recorded alongside of the videostream. For this project real time data processing is needed as there is no hardware available on Gazelle Compute to encode or store four streams of 120fps with QVGA resolution.
+A very important step in hardware and software development is testing. For an eye tracking system it requires a big effort to do this with real data. The reason for that is that the information where the participant looks at each moment needs to be recorded alongside of the videostreams. For this project real time data processing is needed as there is no hardware available on Gazelle Compute to encode or store the video streams of the cameras.
 
 To optimize the algorithms a simple way of generating new data where the gaze direction and the camera positions are known would simplify the process. 
 \section{3D-Modeling Software}
@@ -110,18 +110,18 @@ An existing model of the glasses is used and placed to approximately represent t
 	\begin{subfigure}{.5\textwidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{images/base_model_3D.png}
-		\caption{3D-view of base model}
+		\caption{3D-view of base model that shows also the light cone that follows the eye rotation}
 		\label{fig:base3D}
 	\end{subfigure}
-	\caption{Finished base model with eyes in the center}
+	\caption{Finished base model with eyes in the center. A Script will place the eye correctly and generate an animation from the model that is shown here.}
 	\label{fig:baseModel}
 \end{figure}
 \section{Scripting}
 The base model alone is not enough to create meaningful results because there is no animation, the eyes are not placed and blender would just render one camera. Additionally the position and rotation of the eye and glasses needs to be logged for every frame as they are required for comparing the final gaze direction results. To allow a wide variaty of animations to be created a simple way of configuring the script is needed.
-\subsection{Automate Animation}
+\subsubsection{Automate Animation}
 This script is written in Python because Blender offers a powerfull Phython API that allows such a script to modify every property in a model. 
 JSON is a simple data-interchange format that is easy to read and write for humans. Sites such as \url{http://jsoneditoronline.org/} offer a convenient way to modify JSON. The script uses a JSON file with all the properties as input and adjusts the values in the model and saves a modified blend file for each camera that is ready to be rendered. The properties includes static parameters such as the eye position and diameter and the number of frames that should be rendered. But also dynamic information for keyframes such as the rotation of the eye and position and rotation of the glasses. 
-\subsection{Automate Process}
+\subsubsection{Automate Process}
 With the script the process to generate render output is as follows:
 \textbf{}
 \begin{lstlisting}

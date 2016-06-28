@@ -1,8 +1,9 @@
 \chapter{Pupil Detection}
 \label{chap:pupildetection}
-\section{Current State}
-\label{sec:current}
-\subsection{Overview of Algorithm}
+ Without test data it is very hard to improve an algorithm. The generated pictures of the last chapter lay the groundwork to detect the pupil digitally.
+ 
+ This chapter shows how the current algorithm tries to detect a pupil. Improvements are presented that achieve a better result. 
+\section{Overview of Existing Algorithm}
 The general sequence of the algorithm can be described as follows:
 \begin{enumerate}
 	\item Find darkest spot
@@ -12,16 +13,15 @@ The general sequence of the algorithm can be described as follows:
 \end{enumerate}
 The darkest spot is determined by a raster with a fixed distance between points. For each point the average with the surrounding eights point is calculated. The point with the darkest average is the startpoint for the rest of the algorithm.
 
-Outgoing from the startpoint rays are stamped out by the starburst algorithm. This part will run on the FPGA. 
+Outgoing from the startpoint rays are stamped out by the starburst IP that is described in "Eye Tracking for Sports, Chapter 18.5" 
 
-For each ray that is stamped out by the starburst the difference to the next pixel is calculated. Because the edge may not lie on a single pixel surrounding differences are added together to build a score for each pixel. This score is positive for transitions from a darker pixel to a brighter. The pixel with the highest score is determined as detected edge. So only edges that transit from dark to bright can be detected.
+The difference to the next pixel is calculated for each ray that is stamped out by the starburst IP. Because the edge may not lie on a single pixel surrounding differences are added together to build a score for each pixel. This score is positive for transitions from a darker pixel to a brighter. The pixel with the highest score is determined as detected edge. So only edges that transit from dark to bright can be detected.
 
 Every edgepoint is handed over to a weighted least square method to find a ellipse that fits all the points well.
-\subsection{Testing}
-The algorithm was tested with pictures that were inserted at compile time with the parameters of the ellipse as output. The result was then compared with the result.
-\section{Problem Analysis}
-\subsection{Improve Testing}
-It is very time consuming to generate picture data that can be compiled and to compare the output of the program with what is expected. A better way would be if a algorithm can read any picture or video file and display the result of the algorithm visually on each picture. 
+\subsubsection{Testing}
+The algorithm was tested with pictures that were inserted at compile time with the parameters of the ellipse as output. The result was then compared with the result. This is not efficient and is addressed in the next section.
+\section{Improve Testing}
+It is very time consuming to generate picture data that can be compiled and to compare the output of the program with what is expected. A better way is when a tool can read a video file and display the result of the algorithm visually on each picture. 
 
 The program "Gazelle View" that was developed during the project study can already open and play video files. Because of the modular design of Gazelle View it is simple to insert the algorithm during the decode phase and paint the rays, the detected edges and the fitted ellipse on the image.
 
@@ -30,7 +30,7 @@ All data that was produced by the algorithm may also hold important information 
 The next step to improve testing would be to automate it and ideally condense the performance of the algorithm to parameters such as the mean and variance of the accuracy.
 
 This should be done on a wide variety of test data, at best with high frame rate pictures that were captured with the eye tracking system. For each of those pictures an ellipse has to be fitted manually and stored as a golden reference. As this needs to be done for a lot of pictures the process of generating the reference needs to be simplified.
-\subsection{Outliers}
+\section{Outliers}
 The supplied algorithm does not differentiate between edges that are from the pupil or other edges from hair or the eyelid. The algorithm works fine when every edge is a right one as seen in figure \ref{fig:oldGood}. But as a consequence to the least square method a single false detection severely alters the fitted ellipse as it happens in figure \ref{fig:oldOutlier}. 
 \begin{figure}
 	\begin{subfigure}{.5\textwidth}
@@ -45,12 +45,12 @@ The supplied algorithm does not differentiate between edges that are from the pu
 		\caption{Fitting of Ellipse with one outlier}
 		\label{fig:oldOutlier}
 	\end{subfigure}
-\caption{Comparison between results with and without an outlier}
+\caption{Comparison between results with and without an outlier. It shows the big impact of an outlier on the least square fitting.}
 
 \end{figure}
 
-To mitigate the influence of outlier the occurence needs to be reduced accompanied by the detection of outliers that are still detected.
-\section{Algorithm}
+To mitigate the influence of outlier the occurrence needs to be reduced accompanied by the detection of outliers that are still detected.
+
 \section{Angle-Validation}
 \label{sec:angleValidation}
 To detect outliers it is necessary to find properties that differ strongly from the other transitions. One of those properties gets visible when the angle for each transition gets calculated with the neighbouring transitions. 
@@ -85,7 +85,7 @@ Multiple adjacent outliers differ in that it is not possible to make a clear sta
 
 In figure \ref{fig:nonOutlier} three adjacent transitions have angles that appear too small compared to its neighbours. None of them are outliers.
 
-\subsection{Overview of Algorithm}
+\subsubsection{Overview of Algorithm}
 \label{sec:descriptionOfAngleValidation}
 
 The algorithm to detect outliers based on the angles between transitions involves four steps:
@@ -101,15 +101,15 @@ The algorithm to detect outliers based on the angles between transitions involve
 	\end{itemize}
 	\item Determine outliers
 \end{enumerate}
-\subsection{Calculate Angles}
+\subsubsection{Calculate Angles}
 \label{sec:calculateAngles}
 The angle between the points is calculated with the vectors that stretch from the center point to the other points. For each vector the angle between the x axis and the vector is calculated with the atan2 function. The advantage of the atan2 over the conventional arctangent function is that it takes coordinates and returns the angle for the correct quadrant. The difference of the resulting two angles is the desired angle between the points. 
 
 When the detected transitions are close to each other, measurement uncertainty can greatly affect the angles at such points. To mitigate that effect the angle for a point is only calculated with transitions that are distant enough.
-\subsection{Find adjacent angles with small differences}
+\subsubsection{Find adjacent angles with small differences}
 Context is important to categorize an angle. Only angles that are as expected do not always require context. This is the case when there are three adjacent angles that fall within a narrow range of each other and create context for the neighbouring angles.
 
-\subsection{Categorize Angles}
+\subsubsection{Categorize Angles}
 The found context leads the way to iterate over every transition and categorize the angle within the context. This is done as described in the decision making diagram in \ref{fig:decisionMaking}. Angles are classified into three groups. Angles that are as expected, too big or too small. 
 
 \begin{figure}[H]
@@ -118,7 +118,7 @@ The found context leads the way to iterate over every transition and categorize 
 	\caption{Decision making diagram for categorizing angles}
 	\label{fig:decisionMaking}
 \end{figure}
-\subsection{Determine outliers}
+\subsubsection{Determine outliers}
 As described in section \ref{sec:angleValidation} outliers are surrounded by angles that are not as expected. The categorized angles make that determination straight forward. An outlier is a transition where neither the angle before or after is categorized as expected. 
 The situation described in figure \ref{fig:nonOutlier} where accurate transitions build three adjacent angles that are smaller than expected constitute an exception to this rule. This exception only occurs with adjacent small angles with neighbours that are as expected. 
 \section{Colour of the Startpoint}
