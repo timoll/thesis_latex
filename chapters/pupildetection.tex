@@ -15,7 +15,7 @@ The darkest spot is determined by a raster with a fixed distance between points.
 
 Outgoing from the startpoint rays are stamped out by the starburst IP that is described in "Eye Tracking for Sports, Chapter 18.5" 
 
-The difference to the next pixel is calculated for each ray that is stamped out by the starburst IP. Because the edge may not lie on a single pixel surrounding differences are added together to build a score for each pixel. This score is positive for transitions from a darker pixel to a brighter. The pixel with the highest score is determined as detected edge. So only edges that transit from dark to bright can be detected.
+The difference to the next pixel is calculated for each ray that is stamped out by the starburst IP. Because the edge may not lie on a single pixel, surrounding differences are added together to build a score for each pixel. This score is positive for transitions from a darker pixel to a brighter. The pixel with the highest score is determined as detected edge. So only edges that transit from dark to bright can be detected.
 
 Every edgepoint is handed over to a weighted least square method to find a ellipse that fits all the points well.
 \subsubsection{Testing}
@@ -134,12 +134,14 @@ To decide if an edge has already ocured a similar method as in section \ref{sec:
 
 The high framerate of the eye-capturing cameras results in small differences of the pupil position between frames. This can be used to improve the result because we already have an idea what the ellipse will look like. The startpoint can be adjusted to be the center ofthe old ellipse so the detected edges will be more equally distributed.
 
-With the old ellipse it is also possible to calculate where a ray would transits this ellipse. This information is used to weight the score of a transition similar as the colour of the startpoint in section \label{sec:colorStartpoint} was handled. The score is divided by the absolute distance in pixel to the old ellipse on the ray with a small offset.
+With the old ellipse it is also possible to calculate where a ray would transits this ellipse. This information is used to weight the score of a transition similar as the colour of the startpoint in section \ref{sec:colorStartpoint} was handled. The score is divided by the absolute distance in pixel to the old ellipse on the ray with a small offset.
 \section{Fixed Threshold}
 \label{sec:fixedThreshold}
 This section is about a method that replaces the ray transition that uses a filter with a threshold. 
 
-An edge is detected when the difference to the colour of the startpoint is greater than a certain threshold. This approach is less flexible than the filter because different light conditions or eyes might require a different threshold. 
+An edge is detected when the difference to the colour of the startpoint is greater than a certain threshold. 
+
+As shown in chapter \ref{chap:results} this produces better result than the filter. Although the fixed threshold might cause problems under certain light conditions. Further analysis is needed to evaluate that risk. But even if it turns out to be a problem, there are ways to improve the idea. On such idea would be to calculate edges with multiple thresholds and use a Kalman filter to improve the result.
 
 
 
