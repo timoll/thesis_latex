@@ -79,6 +79,7 @@
 \definecolor{linkblue}{rgb}{0,0,0.8}            % Standard
 \definecolor{darkblue}{rgb}{0,0.08,0.45}        % Dark blue
 \definecolor{bfhgrey}{rgb}{0.41,0.49,0.57}      % BFH grey
+%\definecolor{bfhgrey}{rgb}{0,0,0}      % BFH grey
 %\definecolor{linkcolor}{rgb}{0,0,0.8}     			% Blue for the web- and cd-version!
 \definecolor{linkcolor}{rgb}{0,0,0}        			% Black for the print-version!
 %---------------------------------------------------------------------------
@@ -170,7 +171,7 @@
 \settocdepth{section}														% Set depth of toc
 \pagenumbering{roman}														
 %---------------------------------------------------------------------------
-
+\color{black}
 \input{leader/title}					% Titel der Arbeit aus Datei titel.tex lesen
 \input{leader/version}				% Versionsnummer und -datum aus Datei version.tex lesen
 
@@ -223,6 +224,7 @@
 \include{chapters/eyemodel}
 \include{chapters/pupildetection}
 \include{chapters/testing}
+\include{chapters/outlook}
 \include{chapters/conclusions}
 
 %---------------------------------------------------------------------------

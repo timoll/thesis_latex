@@ -17,10 +17,11 @@ Outgoing from the startpoint rays are stamped out by the starburst IP that is de
 
 The difference to the next pixel is calculated for each ray that is stamped out by the starburst IP. Because the edge may not lie on a single pixel, surrounding differences are added together to build a score for each pixel. This score is positive for transitions from a darker pixel to a brighter. The pixel with the highest score is determined as detected edge. So only edges that transit from dark to bright can be detected.
 
-Every edgepoint is handed over to a weighted least square method to find a ellipse that fits all the points well.
+Every edgepoint is handed over to a weighted least square method to find a ellipse that fits all the points well. The residuals of the lest square fitting are used to calculate how well the ellipse fits on the points.
 \subsubsection{Testing}
 The algorithm was tested with pictures that were inserted at compile time with the parameters of the ellipse as output. The result was then compared with the result. This is not efficient and is addressed in the next section.
 \section{Improve Testing}
+\label{sec:improveTesting}
 It is very time consuming to generate picture data that can be compiled and to compare the output of the program with what is expected. A better way is when a tool can read a video file and display the result of the algorithm visually on each picture. 
 
 The program "Gazelle View" that was developed during the project study can already open and play video files. Because of the modular design of Gazelle View it is simple to insert the algorithm during the decode phase and paint the rays, the detected edges and the fitted ellipse on the image.
@@ -128,7 +129,7 @@ The pupil has an uniform colour. So transitions that go from the pupil to the ir
 \label{sec:randdetektion}
 The colours of te starburst are represented by the values between one and 255. When a point of the starburst is outside the image it is set to zero. With that it is simple to detect the border during the filter. The behaviour in this case is different depending if there was already a edge or not. If there was already an edge we would like to keep that edge otherwise the result of this ray should be discarded. 
 
-To decide if an edge has already ocured a similar method as in section \ref{sec:colorStartpoint} is used. But instead of adjusting the score of a transitions a hard threshold is applied. 
+To decide if an edge has already occurred a similar method as in section \ref{sec:colorStartpoint} is used. But instead of adjusting the score of a transitions a hard threshold is applied. 
 \section{Exploit good Results}
 \label{sec:goodResults}
 
@@ -142,7 +143,29 @@ This section is about a method that replaces the ray transition that uses a filt
 An edge is detected when the difference to the colour of the startpoint is greater than a certain threshold. 
 
 As shown in chapter \ref{chap:results} this produces better result than the filter. Although the fixed threshold might cause problems under certain light conditions. Further analysis is needed to evaluate that risk. But even if it turns out to be a problem, there are ways to improve the idea. On such idea would be to calculate edges with multiple thresholds and use a Kalman filter to improve the result.
+\section{Special Cases}
+\label{sec:specialCases}
+There are a number of special cases that need to be taken into account. They are likely to get forgotten but can cause major problems later on.
 
+\begin{labeling}{\textbf{Pupil not darkest spot}}
+	\item [\textbf{Closed Eyelid}] The algorithm can't produce a valid result when an eyelid is closed. Somewhere it needs to be detected when this is the case otherwise random results are produced. Without the angle validation this would be pretty straight forward as a closed eyelid would cause a bad fitting, which would cause high residuals. With the angle validation it gets a little more complex. Points that are classified as outliers are ignored. With less points it is simpler to get a good fit on random data. To minimize that risk an ellipse is only fitted when at least eight edges were not classified as outliers.
+	
+	There is also the option to validate a fitted ellipse later by comparing it to other fittings in the same area. 
+	\item [\textbf{Pupil partly visible}] It is still possible to fit an ellipse when only a part of the pupil is visible. As described in section \ref{sec:randdetektion} the border is already detected. If the ray did not transit an edge, then the ray is ignored. The quality of the fitting will be generally lower due to the reduced number of valid edges.
+	\item [\textbf{Light reflections}] Light reflections inside the pupil will cause an inner outlier. With the angle validation the edges that are detected that way should be ignored.
+	
+	In case the reflection is right at the startpoint everything will fail as the colour of the startpoint is assumed to be dark and similar to the rest of the pupil in sections \ref{sec:colorStartpoint} and \ref{sec:randdetektion} . The algorithm with a fixed threshold will fail when this is the case.
+	
+	A reflection outside the pupil will likely cause an outlier outside the pupil when measurements described in sections \ref{sec:colorStartpoint} and \ref{sec:goodResults} are not sufficient to prevent it. 
+	
+	Generally reflections may cause major problems and should be eliminated. By placing the infrared LEDs correctly and using glasses that filter infrared light.
+	\item [\textbf{Pupil not darkest spot}] This case needs to be prevented at all cost. Otherwise the startpoint will be completely wrong and a correct fitting is not possible.
+\end{labeling}
+
+\section{Summary}
+This chapter gives a overview of the existing algorithm for digitally detecting the pupil. A convenient way to visually validate the result is presented in section \ref{sec:improveTesting}. This enables a better analysis of the problems with the algorithm. The findings were applied to a variety of different methods to improve the result of the algorithm. Additionaly a different approach was proposed to detect edges with a fixed threshold. A number of special cases are discussed in section \ref{sec:specialCases}.
+
+The validation of the algorithm is done visually. This is a good approach for a first step in improving the algorithm. Different algorithm that produce similar good results can not compared meaningful as there will be a personal bias remaining. For that reason the next chapter compares the performance of the algorithm that uses a fixed threshold and the algorithm that uses a filter to detect edges.
 
 
 
