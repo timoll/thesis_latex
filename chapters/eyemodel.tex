@@ -1,9 +1,9 @@
 \chapter{Model}
 \label{chap:Model}
 
-A very important step in hardware and software development is testing. For an eye tracking system it requires a big effort to do this with real data. The reason for that is that the information where the participant looks at each moment needs to be recorded alongside of the videostreams. For this project real time data processing is needed as there is no hardware available on Gazelle Compute to encode or store the video streams of the cameras.
+A very important step in hardware and software development is testing. For an eye tracking system it requires a big effort to do this with real data. The reason for that is the information where the participant looks at each moment needs to be recorded alongside of the video streams. For this project real time data processing is needed as there is no hardware available on Gazelle Compute to encode or store the video streams of the cameras.
 
-To optimize the algorithms a simple way of generating new data where the gaze direction and the camera positions are known would simplify the process. 
+A simple way of generating new data where the gaze direction and the camera positions are known would simplify the process of optimising the algorithm. 
 \section{3D-Modeling Software}
 \label{sec:whatIsImportant}
 
@@ -11,7 +11,7 @@ The 3D-Modeling software to create the model needs to fulfill a few requirements
 \begin{itemize}
 	\item Correct representation of refracting light
 	\item Create animations 
-	\item Be scriptable
+	\item \gls{API} that allows scripting
 	\begin{itemize}
 		\item Set position and rotation of certain objects at a certain frame
 		\item Set camera properties and which camera is active
@@ -25,9 +25,9 @@ The 3D-Modeling software to create the model needs to fulfill a few requirements
 	\item (optional)Be easy to learn
 \end{itemize}
 
-Blender is able to match all requirements although the last one might be debatable. You can apply a material properties to a surface. This includes refracting. Rotation and position of objects can be inserted as keyframes and it interpolates the steps in-between. 
+Blender is able to match all requirements although the last one might be debatable. You can apply a material property to a surface. This includes refracting. Rotation and position of objects can be inserted as key frames and it interpolates the steps in-between. 
 
-Blender is also an open source project that is built with Python and has an powerful API that gives access to nearly everything.
+Blender is also an open source project that is built with Python and has a powerful \gls{API} that gives access to nearly everything.
 \section{Requirements for the Model}
 In order to create a flexible model that is close to the reality, the model needs to follow the following requirements:
 \begin{itemize}
@@ -41,7 +41,7 @@ In order to create a flexible model that is close to the reality, the model need
 	\item Correctly represent camera properties
 	\begin{itemize}
 		\item Resolution
-		\item Framerate
+		\item Frame rate
 		\item Field of View
 	\end{itemize}
 	\item Gaze direction can be animated
@@ -50,9 +50,9 @@ In order to create a flexible model that is close to the reality, the model need
 \end{itemize}
 
 \section{Human Eye}
-A side view of a human eye model is visible in \ref{fig:humanEyeModel}. The camera can only see the front part of the eye. As a result only the cornea, anterior chamber and the iris need to be modeled correctly. The lens can be simplified by a black surface. 
+A side view of a human eye model is visible in \ref{fig:humanEyeModel}. The camera can only see the front part of the eye. As a result only the cornea, anterior chamber and the iris need to be modelled correctly. The lens can be simplified by a black surface. 
 
-It might be counterintuitive that the cornea extends as much out of the eyeball as visible in \ref{fig:humanEyeModel}. An easy way to verify is to close the eye and move the eyes while holding a finger on the eyelid.
+It might be counter intuitive that the cornea extends as much out of the eyeball as visible in \ref{fig:humanEyeModel}. An easy way to verify that is to close the eye and move the eyes while holding a finger on the eyelid.
 \label{sec:theHumanEye}
 \begin{figure}[H]
 	\centering
@@ -61,7 +61,7 @@ It might be counterintuitive that the cornea extends as much out of the eyeball 
 	\label{fig:humanEyeModel}
 \end{figure}
 
-There are a few models with different values for the refracting indexes, radii and distances but they are close together in most cases. So the simplified Gullstrand eye was chosen for the model.
+There are a few models with different values for the refracting indexes, radii and distances but they vary very little. So the simplified Gullstrand eye was chosen for the model.
 
 \begin{table}[!htb]
 \centering
@@ -82,12 +82,11 @@ A human eye has on average a diameter of 24mm and the distance between the eyes 
 \section{Base Model}
 \label{sec:theModel}
 
-While there are quite a few parameters that need to be adjusted, some will remain the same. Those can be incorporated into a base model that can then be adjusted by a script for each render.
+While there are quite a few parameters that need to be adjusted, some will remain the same. This can be incorporated into a base model that can then be adjusted by a script for each render.
 
 This base model is centred around an accurate eye model that is built with the properties mentioned in section \ref{sec:theHumanEye}. Every eye is a group that can be manipulated with a script as one object. This includes a directed light cone that points where the eye is looking.
 
-An existing model of the glasses is used and placed to approximately represent the position how they would be in the real world. Cutouts for the cameras are used to place them correctly while the rotation is approximated to capture an average positioned eye correctly. The light cones that represent the gaze direction illuminate a small portion of a wall that is captured by the front facing camera and can be seen in figure \ref{fig:base3D}. As with the eye, the cameras and the glasses build a single object that can be moved and rotated. The result can be seen in figure \ref{fig:baseModel} 
-
+An existing model of the glasses is used and placed to approximately represent the position on a human head. Cameras are placed into the their cutouts in the glasses. The rotation is approximated to capture an average positioned eye correctly. The light cones that represent the gaze direction illuminate a small portion of a wall, which is captured by the front facing camera and is visible in figure \ref{fig:base3D}. Similar to the eye, the cameras and the glasses build a single object that can be moved and rotated. The result can be seen in figure \ref{fig:baseModel}
 \begin{figure}
 	\begin{subfigure}{.5\textwidth}
 		\centering
@@ -117,27 +116,14 @@ An existing model of the glasses is used and placed to approximately represent t
 	\label{fig:baseModel}
 \end{figure}
 \section{Scripting}
-The base model alone is not enough to create meaningful results because there is no animation, the eyes are not placed and blender would just render one camera. Additionally the position and rotation of the eye and glasses needs to be logged for every frame as they are required for comparing the final gaze direction results. To allow a wide variaty of animations to be created a simple way of configuring the script is needed.
+The base model alone is not enough to create meaningful results. Because there is no animation, the eyes are not placed and Blender would just render one camera. Additionally, the position and rotation of the eye and glasses needs to be logged for every frame. Otherwise, they can't be compared with the final gaze direction results. A simple way of configuring the script is needed to allow a wide variety of animations to be created.
 \subsubsection{Automate Animation}
-This script is written in Python because Blender offers a powerfull Phython API that allows such a script to modify every property in a model. 
-JSON is a simple data-interchange format that is easy to read and write for humans. Sites such as \url{http://jsoneditoronline.org/} offer a convenient way to modify JSON. The script uses a JSON file with all the properties as input and adjusts the values in the model and saves a modified blend file for each camera that is ready to be rendered. The properties includes static parameters such as the eye position and diameter and the number of frames that should be rendered. But also dynamic information for keyframes such as the rotation of the eye and position and rotation of the glasses. 
+The script is written in Python because Blender offers a powerful Python \gls{API} that allows a script to modify every property in a model.
+\gls{JSON} is a simple data-interchange format that is easy to read and write for humans. Sites such as \url{http://jsoneditoronline.org/} offer a convenient way to modify \gls{JSON}. The script uses a \gls{JSON} file with all the properties as input. It adjusts the values in the model and saves a modified blend file for each camera. This blend file is ready to be rendered without any further modification. The properties include static parameters such as the eye position and diameter. But also dynamic information for key frames such as the rotation of the eye and position of the glasses.
 \subsubsection{Automate Process}
-With the script the process to generate render output is as follows:
-\textbf{}
-\begin{lstlisting}
-#Use script to generate render ready files
-blender base.blend -b -P generate.py -- animation.json
-#render the animation for each camera
-blender -b leftDown.blend -E CYCLES -t 4 -a
-blender -b leftUp.blend -E CYCLES -t 4 -a
-blender -b rightDown.blend -E CYCLES -t 4 -a
-blender -b rightUp.blend -E CYCLES -t 4 -a
-blender -b scene.blend -E CYCLES -t 4 -a
-\end{lstlisting}
+Even with the script, the process to generate render output is still very time consuming. First the script needs to be applied to base model, which produces the blend files that are ready to render. For each file a render job needs to be started. 
 
-This is still very time consuming and can be automated further. 
-
-A Makefile offers a convenient way to automate the stages further and make it simple to clean the whole mess up once the generated or rendered files are not needed anymore. 
+A Makefile offers a convenient way to automate the stages further. Additionally, it makes it simple to clean the whole mess up once the generated or rendered files are not needed anymore. 
 With the Makefile the whole process is shorter and easier to remember:
 \textbf{}
 \begin{lstlisting}
@@ -147,4 +133,7 @@ make
 make render
 \end{lstlisting}
 
-An added benefit is also that make will start the render jobs detached and distribute the available cpu cores equally among the render jobs.
+After a few hours test data is ready to be used for analysis.
+
+
+

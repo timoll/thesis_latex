@@ -1,29 +1,26 @@
 \chapter{Testing}
 \label{chap:results}
 
-A partner work implemented a method to calculate the gaze direction with two fitted ellipse from different cameras of the same eye. Together with the algorithm described in the last chapter they enable the gaze direction from picture data. The pictures and parameters generated in chapter \ref{chap:Model} can now be used to compare the result of the algorithms with the parameters. Results from both eyes are intelligently combined to improve the accuracy. More information about how this is accomplished can be found in the partner work.
-
-
+A partner work implemented a method to calculate the gaze direction with two fitted ellipses from different cameras of the same eye. Together with the algorithm described in the last chapter, it is possible to calculate the gaze direction from picture data. Results from both eyes are intelligently combined to improve the accuracy. More information about how this is accomplished can be found in the partner work\cite{bleuer}. The pictures and parameters generated in chapter \ref{chap:Model} can now be used to compare the result of the algorithms with the parameters.
 
 \subsubsection{Animation}
 \label{sec:animation}
 
-The animation for this test should cover a wide variety of gaze directions. Otherwise directions that produce strange results could be missed. Additionally no big jumps should occur as the algorithm for the pupil detection uses the last frame as reference. 
+The animation for this test should cover a wide variety of gaze directions. Otherwise, directions that produce strange results could be missed. Additionally, no big jumps should occur as the algorithm for the pupil detection uses the last frame as reference.
 
 A path that fulfils those requirements is shown in figure \ref{fig:path}. It covers a wide area of 40$^{\circ}$ in all directions and follows the path with a steady speed.
 
 \begin{figure} [H]
-		\centering
-		\includegraphics[width=0.4\linewidth]{images/grid.png}
-		\label{fig:path}
-	
-	\caption{Path that the eyes follow during the animation. It starts at \{-20$^{\circ}$,-20$^{\circ}$\} and follows the black in a horizontal zick-zack pattern path until it reaches \{20$^{\circ}$,20$^{\circ}$\}. From there it follows the blue vertical zick-zack pattern path until it reaches the start point again. }	
+	\centering
+	\includegraphics[width=0.4\linewidth]{images/grid.png}
+	\caption{Path that the eyes follow during the animation. It starts at \{-20$^{\circ}$, -20$^{\circ}$\} and follows the black in a horizontal zick-zack pattern path until it reaches \{20$^{\circ}$, 20$^{\circ}$\}. From there it follows the blue vertical zick-zack pattern path until it reaches the start point again. }
+	\label{fig:path}	
 \end{figure}
 
-You would expect a higher resolution to produce a more accurate result. The animation was rendered at QVGA, VGA and UVGA resolutions to test that hypothesis. 
+You would expect a higher resolution to produce a more accurate result. The animation was rendered at \gls{QVGA}(240x320), \gls{VGA}(480x640) and \gls{UVGA}(960x1280) resolutions to test that hypothesis. 
 \subsubsection{Results}
 
-The fixed threshold algorithm and the filter algorithm were both applied to every resolution. The result for the VGA resolution with fixed and filter algorithm are presented in figure \ref{fig:VGA}. It seems that the filtered algorithm performs worse than the fixed threshold algorithm. This is confirmed by a look at the standard deviation. The filter algorithm performs much worse at the lower VGA and QVGA resolutions as it is shown in figure \ref{fig:fixedMiddle}. A big contribution  to this discrepancy is the much worse maximal deviation. 
+The fixed threshold algorithm and the filter algorithm were both applied to every resolution. The result for the \gls{VGA} resolution with fixed and filter algorithm are presented in figure \ref{fig:VGA}. It seems that the filter algorithm performs worse than the fixed threshold algorithm. This is confirmed by a look at the standard deviation. The filter algorithm performs much worse at the lower \gls{VGA} and \gls{QVGA} resolutions as shown in figure \ref{fig:fixedMiddle}. A big contribution to this discrepancy is much higher maximal deviation. 
 
 \begin{figure}
 	\begin{subfigure}{.5\textwidth}
@@ -39,7 +36,7 @@ The fixed threshold algorithm and the filter algorithm were both applied to ever
 		\label{fig:normalMiddle}
 	\end{subfigure}
 
-	\caption{Comparison between the gaze direction obtained by the log of the animation(dashed) and calculated direction with the algorithms(solid). The results for the fixed threshold in figure \ref{fig:fixedMiddle} seem more accurate than the results for the filtered algorithm in figure \ref{fig:normalMiddle}.}
+	\caption{Comparison between the gaze direction obtained by the log of the animation(dashed) and calculated direction with the algorithms(solid). The results for the fixed threshold in figure \ref{fig:fixedMiddle} seem more accurate than the results for the filter algorithm in figure \ref{fig:normalMiddle}.}
 	\label{fig:VGA}
 \end{figure}
 
@@ -63,7 +60,7 @@ ylabel=Standart Deviation in Degrees,
 xlabel=Resolution,
 enlarge x limits=0.2,
 %enlarge y limits={abs=0.5},
-symbolic x coords={QVGA,VGA, UVGA},
+symbolic x coords={QVGA,VGA,UVGA},
 %restrict y to domain*=0:11, % Cut values off at 14
 visualization depends on=rawy\as\rawy, % Save the unclipped values
 after end axis/.code={ % Draw line indicating break
@@ -81,7 +78,7 @@ area legend
 \legend{filter,fixed};
 \end{axis}
 \end{tikzpicture}
-\caption{Fixed Algorithm}
+\caption{}
 \label{fig:standartDeviation}
 \end{subfigure}
 \begin{subfigure}{.5\textwidth}
@@ -103,7 +100,7 @@ area legend
 	xlabel=Resolution,
 	enlarge x limits=0.2,
 	%enlarge y limits={abs=0.5},
-	symbolic x coords={QVGA,VGA, UVGA},
+	symbolic x coords={QVGA,VGA,UVGA},
 	%restrict y to domain*=0:11, % Cut values off at 14
 	visualization depends on=rawy\as\rawy, % Save the unclipped values
 	after end axis/.code={ % Draw line indicating break
@@ -121,13 +118,13 @@ area legend
 	\legend{filter,fixed};
 	\end{axis}
 	\end{tikzpicture}
-	\caption{Filtered Algorithm}
+	\caption{}
 	\label{fig:maximalDeviation}
 \end{subfigure}
-\caption{Figure \ref{fig:standartDeviation} shows the standart deviation between the resolutions and different algorithm. The filter algorithm performs similar to the fixed threshold algorithm at the UVGA resolution. But at the lower resolutions it performs much worse. An explanation for that can be found in the maximal deviation in Figure \ref{fig:maximalDeviation}. The maximal deviation is much bigger for the filtered algorithm.}
+\caption{Figure \ref{fig:standartDeviation} shows the standart deviation between the resolutions and different algorithm. The filter algorithm performs similar to the fixed threshold algorithm at the \gls{UVGA} resolution. But at the lower resolutions it performs much worse. An explanation for that can be found in the maximal deviation in Figure \ref{fig:maximalDeviation}. The maximal deviation is much bigger for the filter algorithm.}
 \label{fixedVsFilter}
 \end{figure}
 \subsubsection{Discussion}
-It is quite surprising how much better the fixed threshold algorithm performs at the resolutions that are more relevant for the Gazelle eye-tracking system. It has to be noted that the measurements are not with real data. Once the algorithm is implemented on GazelleCompute measurements with actual data can be done.
+It is quite surprising how much better the fixed threshold algorithm performs at the lower resolutions. It has to be noted that the measurements are not with real data. Once the algorithm is implemented on GazelleCompute, measurements with actual data should be done.
 
-Initially it was planed to configure the cameras with QVGA resolution and a framerate of 120fps. The results presented in figure \ref{fig:standartDeviation} show a reduction of the standard deviation of 44\% for the fiexed threshold algorithm. This is an improvement that  For the Gazelle project the higher resolution would come at the cost with a reduction of the framerate from 120fps to 90fps. 
+Initially it was planed to configure the cameras with \gls{QVGA} resolution and a frame rate of 120fps. The results presented in figure \ref{fig:standartDeviation} show a reduction of the standard deviation of 44\% for the fixed threshold algorithm. This is an improvement that strongly favors the VGA resolution. For the Gazelle project the higher resolution would come at the cost of a reduced frame rate of 90fps instead of the planned 120.

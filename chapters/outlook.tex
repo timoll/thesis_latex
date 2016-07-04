@@ -1,21 +1,21 @@
 \chapter{Further Work}
 \label{chap:outlook}
-The work done in this thesis and the partner work bring the Gazelle eye-tracking project a good step forward. However there are still some areas that require work to make the eye-tracking system functional.
+The work done in this thesis and the partner work bring the Gazelle eye-tracking project a good step forward. However, there are still some areas that require work to make the eye-tracking system functional.
 
 \subsubsection{Implement Algorithm on GazelleCompute}
 
-The algorithm for the digital detection of the pupil needs to run on the ARM cores of the Zynq FPGA that is on GazelleCompute. There are still some problems to solve to achieve this. The first is synchronisation. There are two cores available but at any time only one can transfer data to the Tegra 3. Furthermore interrupts when new data is available need to be handled.
+The algorithm for the digital detection of the pupil needs to run on the \gls{ARM} cores of the Zynq \gls{FPGA} that is on GazelleCompute. There are still some problems to solve to achieve this. The first is synchronization. There are two cores available but at any time only one can transfer data to the Tegra 3. Furthermore, interrupts when new data is available need to be handled.
 
-\subsubsection{Test With Real Data} 
+\subsubsection{Test With Real Data}
 
-Tests with data generated from the animation were used for testing. Although this was enough to valide the principle. Real data can show a wide variety of problems that don't occur with synthetic data. After the algorithm is implemented on GazelleCompute such measurements would be possible. Different light conditions and different participants should be tested to cover as many cases as possible.
+Tests with data generated from the animation were used for testing. Although this was enough to validate the principle, real data can show a wide variety of problems that don't occur with synthetic data. Such measurements would be possible after implementing the algorithm on GazelleCompute. Different light conditions and different participants should be tested to cover as many cases as possible.
 
 \subsubsection{Create Unit Test Framework}
 
-Fine tuning thresholds used in the algorithm needs a repeatable set of tests that assess the performance of the algorithm. In a best case scenario this would consist of image data from GazelleGlasses. As there are problems with the data transfer to the Tegra this could be impossible. A solution would maybe consist of reduced resolution and framerate and only a single camera. 
+Fine tuning thresholds used in the algorithm need a repeatable set of tests that assess the performance of the algorithm. In the best case scenario this would consist of image data from GazelleGlasses. As there are problems with the data transfer to the Tegra, this could be impossible. A solution would maybe consist of reduced resolution and frame rate from only a single camera.
 
-A unit test needs good ellipse fittings as reference. Creating a reference data set needs to be facilitated to allow many ellipses to be fitted by a human. 
+A unit test needs good ellipse fittings as reference. Creating a reference data set needs to be facilitated to allow many ellipses to be fitted by a human.
 
 \subsubsection{Improve Fixed Threshold Algorithm}
 
- The fixed threshold algorithm is currently implemented in a very crude way. There are still quite some improvements possible. Such as an approach with different threshold and a Kalman filter for choosing a more accurate edge.
+The fixed threshold algorithm is currently implemented in a very crude way. There are still many improvements possible. An example would be an approach with different threshold and a Kalman filter for choosing a more accurate edge.
